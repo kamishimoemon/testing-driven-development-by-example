@@ -1,0 +1,21 @@
+{
+	"name": "tdd/money",
+	"type": "library",
+	"require-dev": {
+		"phpunit/phpunit": "^9.5"
+	},
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Darío Candotti",
+			"email": "dario.candotti@gmail.com"
+		}
+	],
+	"require": {},
+	"scripts": {
+		"test": "phpunit test --color"
+	},
+	"autoload": {
+		 "classmap": ["src/"]
+	}
+}
