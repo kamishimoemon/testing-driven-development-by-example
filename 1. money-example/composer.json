@@ -13,9 +13,9 @@
 	],
 	"require": {},
 	"scripts": {
-		"test": "phpunit test --color"
+		"test": "phpunit test --color --stop-on-failure"
 	},
 	"autoload": {
-		 "classmap": ["src/"]
+		"classmap": ["src/"]
 	}
 }
