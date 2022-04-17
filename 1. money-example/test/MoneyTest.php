@@ -15,4 +15,13 @@ class MoneyTest
 		$product = $five->times(3);
 		$this->assertEquals(15, $product->amount);
 	}
+
+	/**
+	 * @test
+	 */
+	public function testEquality (): void
+	{
+		$this->assertTrue((new Dollar(5))->equals(new Dollar(5)));
+		$this->assertFalse((new Dollar(5))->equals(new Dollar(6)));
+	}
 }
