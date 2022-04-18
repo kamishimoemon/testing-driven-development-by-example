@@ -38,4 +38,13 @@ class MoneyTest
 		$this->assertEquals(Money::franc(10), $five->times(2));
 		$this->assertEquals(Money::franc(15), $five->times(3));
 	}
+
+	/**
+	 * @test
+	 */
+	public function testCurrency (): void
+	{
+		$this->assertEquals('USD', Money::dollar(1)->currency());
+		$this->assertEquals('CHF', Money::franc(1)->currency());
+	}
 }
