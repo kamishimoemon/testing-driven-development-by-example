@@ -14,6 +14,8 @@ class MoneyTest
 
 		$this->assertTrue((new Franc(5))->equals(new Franc(5)));
 		$this->assertFalse((new Franc(5))->equals(new Franc(6)));
+
+		$this->assertFalse((new Franc(5))->equals(new Dollar(5)));
 	}
 
 	/**
