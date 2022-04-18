@@ -6,9 +6,4 @@ class Dollar
 	{
 		parent::__construct($amount, $currency);
 	}
-
-	public function times (int $multiplier): Money
-	{
-		return Money::dollar($this->amount * $multiplier);
-	}
 }

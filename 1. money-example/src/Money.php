@@ -1,10 +1,10 @@
 <?php
-abstract class Money
+class Money
 {
 	protected $amount;
 	protected $currency;
 
-	protected function __construct (int $amount, string $currency)
+	public function __construct (int $amount, string $currency)
 	{
 		$this->amount = $amount;
 		$this->currency = $currency;
@@ -12,7 +12,7 @@ abstract class Money
 
 	public function equals (Money $money): bool
 	{
-		return $this->amount == $money->amount && get_class($this) == get_class($money);
+		return $this->amount == $money->amount && $this->currency == $money->currency;
 	}
 
 	public function currency (): string
@@ -20,7 +20,10 @@ abstract class Money
 		return $this->currency;
 	}
 
-	public abstract function times (int $multiplier): Money;
+	public function times (int $multiplier): Money
+	{
+		return new Money($this->amount * $multiplier, $this->currency);
+	}
 
 	public static function dollar (int $amount): Dollar
 	{
