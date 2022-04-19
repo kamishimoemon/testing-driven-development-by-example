@@ -45,4 +45,35 @@ class MoneyTest
 		$reduced = $bank->reduce($sum, 'USD');
 		$this->assertTrue((Money::dollar(10))->equals($reduced));
 	}
+
+	/**
+	 * @test
+	 */
+	public function testPlusReturnsSum (): void
+	{
+		$five = Money::dollar(5);
+		$sum = $five->plus($five);
+		$this->assertEquals($five, $sum->augend);
+		$this->assertEquals($five, $sum->addend);
+	}
+
+	/**
+	 * @test
+	 */
+	public function testReduceSum (): void
+	{
+		$sum = new Sum(Money::dollar(3), Money::dollar(4));
+		$bank = new Bank();
+		$this->assertTrue(Money::dollar(7)->equals($bank->reduce($sum, 'USD')));
+	}
+
+	/**
+	 * @test
+	 */
+	public function testReduceMoney (): void
+	{
+		$bank = new Bank();
+		$result = $bank->reduce(Money::dollar(1), 'USD');
+		$this->assertTrue(Money::dollar(1)->equals($result));
+	}
 }
