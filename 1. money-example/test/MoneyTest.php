@@ -69,11 +69,33 @@ class MoneyTest
 
 	/**
 	 * @test
+	 * @depends testIdentityRate
 	 */
 	public function testReduceMoney (): void
 	{
 		$bank = new Bank();
 		$result = $bank->reduce(Money::dollar(1), 'USD');
 		$this->assertTrue(Money::dollar(1)->equals($result));
+	}
+
+	/**
+	 * @test
+	 * @depends testReduceMoney
+	 */
+	public function testReduceMoneyDifferentCurrency (): void
+	{
+		$bank = new Bank();
+		$bank->addRate('CHF', 'USD', 2);
+		$result = $bank->reduce(Money::franc(2), 'USD');
+		$this->assertTrue(Money::dollar(1)->equals($result));
+	}
+
+	/**
+	 * @test
+	 */
+	public function testIdentityRate (): void
+	{
+		$bank = new Bank();
+		$this->assertEquals(1, $bank->rate('USD', 'USD'));
 	}
 }
