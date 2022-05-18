@@ -1,0 +1,17 @@
+{
+	"name": "tdd/xunit",
+	"type": "library",
+	"license": "MIT",
+	"authors": [
+		{
+			"name": "Darío Candotti",
+			"email": "dario.candotti@gmail.com"
+		}
+	],
+	"scripts": {
+		"test": "php -f test/test.php"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	}
+}
