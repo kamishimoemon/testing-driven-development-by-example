@@ -1,6 +1,6 @@
 <?php
-(new TestCaseTest('testRunning'))->run();
-(new TestCaseTest('testSetUp'))->run();
+//(new TestCaseTest('testRunning'))->run();
+(new TestCaseTest('testTemplateMethod'))->run();
 
 class TestCase
 {
@@ -15,9 +15,14 @@ class TestCase
 	{
 		$this->setUp();
 		$this->{$this->name}();
+		$this->tearDown();
 	}
 
 	public function setUp (): void
+	{
+	}
+
+	public function tearDown (): void
 	{
 	}
 }
@@ -25,24 +30,27 @@ class TestCase
 class WasRun
 	extends TestCase
 {
-	public $wasRun;
-	public $wasSetUp;
+	public $log;
 
 	public function __construct ($name)
 	{
 		parent::__construct($name);
-		$this->wasRun = false;
-		$this->wasSetUp = false;
+		$this->log = '';
 	}
 
 	public function testMethod (): void
 	{
-		$this->wasRun = true;
+		$this->log .= ' testMethod';
 	}
 
 	public function setUp (): void
 	{
-		$this->wasSetUp = true;
+		$this->log .= 'setUp';
+	}
+
+	public function tearDown (): void
+	{
+		$this->log .= ' tearDown';
 	}
 }
 
@@ -51,20 +59,10 @@ class TestCaseTest
 {
 	private $test;
 
-	public function testRunning (): void
-	{
-		$this->test->run();
-		assert($this->test->wasRun);
-	}
-
-	public function testSetUp (): void
-	{
-		$this->test->run();
-		assert($this->test->wasSetUp);
-	}
-
-	public function setUp (): void
+	public function testTemplateMethod (): void
 	{
 		$this->test = new WasRun('testMethod');
+		$this->test->run();
+		assert($this->test->log == 'setUp testMethod tearDown');
 	}
 }
