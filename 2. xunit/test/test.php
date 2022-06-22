@@ -2,6 +2,7 @@
 (new TestCaseTest('testTemplateMethod'))->run();
 (new TestCaseTest('testResult'))->run();
 (new TestCaseTest('testFailedResult'))->run();
+(new TestCaseTest('testFailedResultFormatting'))->run();
 
 class TestCase
 {
@@ -17,7 +18,14 @@ class TestCase
 		$result = new TestResult();
 		$result->testStarted();
 		$this->setUp();
-		$this->{$this->name}();
+		try
+		{
+			$this->{$this->name}();
+		}
+		catch (Exception $ex)
+		{
+			$result->testFailed();
+		}
 		$this->tearDown();
 		return $result;
 	}
@@ -66,15 +74,21 @@ class WasRun
 class TestResult
 {
 	private $runCount = 0;
+	private $errorCount = 0;
 
 	public function testStarted (): void
 	{
 		$this->runCount++;
 	}
 
+	public function testFailed (): void
+	{
+		$this->errorCount++;
+	}
+
 	public function summary (): string
 	{
-		return "{$this->runCount} run, 0 failed";
+		return "{$this->runCount} run, {$this->errorCount} failed";
 	}
 }
 
@@ -101,6 +115,14 @@ class TestCaseTest
 	{
 		$test = new WasRun('testBrokenMethod');
 		$result = $test->run();
+		assert($result->summary() == '1 run, 1 failed');
+	}
+
+	public function testFailedResultFormatting (): void
+	{
+		$result = new TestResult();
+		$result->testStarted();
+		$result->testFailed();
 		assert($result->summary() == '1 run, 1 failed');
 	}
 }
