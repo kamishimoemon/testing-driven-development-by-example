@@ -1,8 +1,12 @@
 <?php
-(new TestCaseTest('testTemplateMethod'))->run();
-(new TestCaseTest('testResult'))->run();
-(new TestCaseTest('testFailedResult'))->run();
-(new TestCaseTest('testFailedResultFormatting'))->run();
+$suite = new TestSuite();
+$suite->add(new TestCaseTest('testTemplateMethod'));
+$suite->add(new TestCaseTest('testResult'));
+$suite->add(new TestCaseTest('testFailedResult'));
+$suite->add(new TestCaseTest('testFailedResultFormatting'));
+$result = new TestResult();
+$suite->run($result);
+echo $result->summary();
 
 class TestCase
 {
@@ -13,9 +17,8 @@ class TestCase
 		$this->name = $name;
 	}
 
-	public function run (): TestResult
+	public function run (TestResult $result): void
 	{
-		$result = new TestResult();
 		$result->testStarted();
 		$this->setUp();
 		try
@@ -27,7 +30,6 @@ class TestCase
 			$result->testFailed();
 		}
 		$this->tearDown();
-		return $result;
 	}
 
 	public function setUp (): void
@@ -92,37 +94,69 @@ class TestResult
 	}
 }
 
+class TestSuite
+{
+	private $tests = [];
+
+	public function add (TestCase $test): void
+	{
+		$this->tests[] = $test;
+	}
+
+	public function run (TestResult $result): void
+	{
+		foreach ($this->tests as $test)
+		{
+			$test->run($result);
+		}
+	}
+}
+
 class TestCaseTest
 	extends TestCase
 {
 	private $test;
+	private $result;
+
+	public function setUp (): void
+	{
+		$this->result = new TestResult();
+	}
 
 	public function testTemplateMethod (): void
 	{
 		$this->test = new WasRun('testMethod');
-		$this->test->run();
+		$this->test->run($this->result);
 		assert($this->test->log == 'setUp testMethod tearDown');
 	}
 
 	public function testResult (): void
 	{
 		$test = new WasRun('testMethod');
-		$result = $test->run();
-		assert($result->summary() == '1 run, 0 failed');
+		$test->run($this->result);
+		assert($this->result->summary() == '1 run, 0 failed');
 	}
 
 	public function testFailedResult (): void
 	{
 		$test = new WasRun('testBrokenMethod');
-		$result = $test->run();
-		assert($result->summary() == '1 run, 1 failed');
+		$test->run($this->result);
+		assert($this->result->summary() == '1 run, 1 failed');
 	}
 
 	public function testFailedResultFormatting (): void
 	{
-		$result = new TestResult();
-		$result->testStarted();
-		$result->testFailed();
-		assert($result->summary() == '1 run, 1 failed');
+		$this->result->testStarted();
+		$this->result->testFailed();
+		assert($this->result->summary() == '1 run, 1 failed');
+	}
+
+	public function testSuite (): void
+	{
+		$suite = new TestSuite();
+		$suite->add(new WasRun('testMethod'));
+		$suite->add(new WasRun('testBrokenMethod'));
+		$suite->run($this->result);
+		assert($result->summary() == '2 run, 1 failed');
 	}
 }
