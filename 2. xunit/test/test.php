@@ -1,6 +1,7 @@
 <?php
-//(new TestCaseTest('testRunning'))->run();
 (new TestCaseTest('testTemplateMethod'))->run();
+(new TestCaseTest('testResult'))->run();
+(new TestCaseTest('testFailedResult'))->run();
 
 class TestCase
 {
@@ -11,11 +12,14 @@ class TestCase
 		$this->name = $name;
 	}
 
-	public function run (): void
+	public function run (): TestResult
 	{
+		$result = new TestResult();
+		$result->testStarted();
 		$this->setUp();
 		$this->{$this->name}();
 		$this->tearDown();
+		return $result;
 	}
 
 	public function setUp (): void
@@ -52,6 +56,26 @@ class WasRun
 	{
 		$this->log .= ' tearDown';
 	}
+
+	public function testBrokenMethod (): void
+	{
+		throw new Exception();
+	}
+}
+
+class TestResult
+{
+	private $runCount = 0;
+
+	public function testStarted (): void
+	{
+		$this->runCount++;
+	}
+
+	public function summary (): string
+	{
+		return "{$this->runCount} run, 0 failed";
+	}
 }
 
 class TestCaseTest
@@ -64,5 +88,19 @@ class TestCaseTest
 		$this->test = new WasRun('testMethod');
 		$this->test->run();
 		assert($this->test->log == 'setUp testMethod tearDown');
+	}
+
+	public function testResult (): void
+	{
+		$test = new WasRun('testMethod');
+		$result = $test->run();
+		assert($result->summary() == '1 run, 0 failed');
+	}
+
+	public function testFailedResult (): void
+	{
+		$test = new WasRun('testBrokenMethod');
+		$result = $test->run();
+		assert($result->summary() == '1 run, 1 failed');
 	}
 }
